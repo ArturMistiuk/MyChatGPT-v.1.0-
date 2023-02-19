@@ -58,26 +58,6 @@ class Phone:
         self.value = phones
 
 
-# +380934763845
-# This function changes phone number in a existing contact
-def change_number(name):
-    record_name = Name(name)
-    if record_name.value in contact_book:    # Checks that contact with given name is exist
-        record = Record(record_name.value, contact_book[record_name.value])
-        return record.change_number()
-    else:    # If contact with name doesn't exist
-        return f'{name} does not exist in contacts. Try to create new contact.'
-
-
-def del_number(name):
-    record_name = Name(name)
-    if record_name.value in contact_book:    # Checks that contact with given name is exist
-        record = Record(record_name.value, contact_book[record_name.value])
-        return record.del_number()
-    else:    # If contact with name doesn't exist
-        return f'{name} does not exist in contacts. Try to create new contact.'
-
-
 # A decorator block to handle user input errors.
 def input_error(func):
     def inner(arguments):
@@ -88,6 +68,8 @@ def input_error(func):
             return 'Wrong arguments!'
         except TypeError:
             return 'Wrong command!'
+        except IndexError:
+            return 'Wrong arguments'
     return inner
 
 
@@ -115,12 +97,31 @@ def advice():
     return instruction
 
 
-####
+# +380934763845
+# This function changes phone number in a existing contact
+@input_error
+def change_number(name):
+    record_name = Name(name)
+    if record_name.value in contact_book:    # Checks that contact with given name is exist
+        record = Record(record_name.value, contact_book[record_name.value])
+        return record.change_number()
+    else:    # If contact with name doesn't exist
+        return f'{name} does not exist in contacts. Try to create new contact.'
 
 
 def close_bot():
     instruction = 'Good bye!'
     return instruction
+
+
+@input_error
+def del_number(name):
+    record_name = Name(name)
+    if record_name.value in contact_book:    # Checks that contact with given name is exist
+        record = Record(record_name.value, contact_book[record_name.value])
+        return record.del_number()
+    else:    # If contact with name doesn't exist
+        return f'{name} does not exist in contacts. Try to create new contact.'
 
 
 # Currying
@@ -142,6 +143,7 @@ def get_phone(name):
     return f"{name}'s phone numbers are: {contact_book[name]}"
 
 
+@input_error
 def new_number(record_name, new_number_for_contact):
     record_name = Name(record_name)
     if record_name.value in contact_book:
@@ -178,7 +180,6 @@ COMMANDS = {
 }
 # Book of contacts
 contact_book = AddressBook()
-contacts = {}
 
 
 def main():
